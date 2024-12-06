@@ -17,6 +17,10 @@ namespace com.ultimate2d.combat
         public float rotateSpeed;
         public float zoomSpeed;
 
+        float inputVector;
+        float smoothInputVelocity;
+        public float acceleration;
+
         void Update()
         {
             Vector3 targetPosition = target.position + offset;
@@ -29,6 +33,15 @@ namespace com.ultimate2d.combat
 
             // rotate around target
             transform.LookAt(target);
+            // smooth damp for camera movement
+            float currentInputVector = Input.GetAxis("Horizontal");
+            if(currentInputVector > 0.1f)
+            {
+                // dampering
+                currentInputVector = Mathf.SmoothDamp(currentInputVector, inputVector, ref smoothInputVelocity, acceleration);
+            }
+
+            //Debug.Log(currentInputVector);
             transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * rotateSpeed * Time.deltaTime);
             
             // zoom controls for camera
