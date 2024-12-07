@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+// edit class so it only completes current hole when spawned 
 public class CopController : MonoBehaviour
 {
     private float power;
@@ -15,6 +16,8 @@ public class CopController : MonoBehaviour
 
     float stopVelocityThreshold = 0.5f;
 
+    private GoToNextHole _goToNextHole;
+
     void Start()
     {
         var holes = GameObject.FindGameObjectsWithTag("copstart");
@@ -24,8 +27,9 @@ public class CopController : MonoBehaviour
         }
 
         rb = GetComponent<Rigidbody>();
-        StartCoroutine(CompleteHole("Hole1"));
-        //GetDistance();
+        _goToNextHole = GameObject.Find("Player").GetComponent<GoToNextHole>();
+        StartCoroutine(CompleteHole(_goToNextHole.currentHole.ToString()));
+
     }
 
     void Update()
@@ -61,7 +65,6 @@ public class CopController : MonoBehaviour
             currentHole = 0;
         transform.position = holesReference["Hole" + GetNextHole().ToString()] + Vector3.up;
 
-        scored = false;
     }
 
     int GetNextHole()
@@ -88,7 +91,10 @@ public class CopController : MonoBehaviour
             for(int i=0; i<parentObject.transform.childCount; i++)
             {
                 if(parentObject.transform.GetChild(i).name.Contains("waypoint"))
+                {
                     waypoints.Add(parentObject.transform.GetChild(i).position);
+                    Debug.Log(parentObject.transform.GetChild(i).name + " is at " + parentObject.transform.GetChild(i).position);
+                }
             }
         }
         catch (Exception e)
@@ -103,34 +109,43 @@ public class CopController : MonoBehaviour
         {
             // hit the ball in that direction with power appropriate to distance
             // gauge distance to waypoint
+            Debug.Log("going to waypoint at: " + waypoint);
+
             var distanceToHit = Vector3.Distance(transform.position, waypoint);
 
+            //Debug.Log("waypoint distance: " + distanceToHit);
             if(distanceToHit > 61)
                 power = 1.5f;
-            if(distanceToHit > 42)
+            else if(distanceToHit > 42)
                 power = 1.02f;
-            if(distanceToHit > 24)
-                power = .75f;
+            else if(distanceToHit > 24)
+                power = .73f;
+            else if(distanceToHit > 10)
+                power = .35f;
             else
                 power = 0.1f;
          
-            Debug.Log(power);
+            //Debug.Log(power);
 
             // hit the ball towards waypoint
             var direction = (waypoint - transform.position).normalized;
             direction.y = 0;
+            Debug.Log(direction);
             rb.AddForce(direction * power, ForceMode.Impulse);
 
+            yield return null;
             yield return null;
 
             yield return new WaitUntil(() => rb.velocity == Vector3.zero);
 
 
             lastPoint = waypoint;
+            scored = false;
         }
 
-        yield return null;
+        yield return new WaitForSeconds(3f);
 
+        Debug.Log("finishing up");
         while(!scored)
         {
             var distanceToHit = Vector3.Distance(transform.position, lastPoint);
@@ -148,15 +163,13 @@ public class CopController : MonoBehaviour
             {
                 var direction = (lastPoint - transform.position).normalized;
                 direction.y = 0;
+                Debug.Log(direction);
                 rb.AddForce(direction * power, ForceMode.Impulse);
             }
 
-            yield return null;
+            yield return new WaitForSeconds(3f);
 
         }
-
-        
-        StartCoroutine(CompleteHole("Hole" + currentHole.ToString()));
 
     }
 

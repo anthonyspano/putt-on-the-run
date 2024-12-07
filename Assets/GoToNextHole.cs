@@ -5,7 +5,6 @@ using System;
 
 public class GoToNextHole : MonoBehaviour
 {
-    [SerializeField]
     public Dictionary<string, Vector3> holesReference = new Dictionary<string, Vector3>();
     public int currentHole = 1;
 
