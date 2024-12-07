@@ -11,11 +11,9 @@ public class WinState : MonoBehaviour
     {
         if(other.gameObject.CompareTag("cup"))
         {
-            Debug.Log("gimme");
             if(other.gameObject.transform.parent.parent.name == "Hole6")
             {
                 winStateText.gameObject.SetActive(true);
-                Debug.Log("restarting");
                 StartCoroutine(RestartGame());
             }
         }

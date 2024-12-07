@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 // edit class so it only completes current hole when spawned 
 public class CopController : MonoBehaviour
@@ -18,6 +20,8 @@ public class CopController : MonoBehaviour
 
     private GoToNextHole _goToNextHole;
 
+    public GameObject failTextObject;
+
     void Start()
     {
         var holes = GameObject.FindGameObjectsWithTag("copstart");
@@ -28,6 +32,7 @@ public class CopController : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         _goToNextHole = GameObject.Find("Player").GetComponent<GoToNextHole>();
+        currentHole = _goToNextHole.currentHole;
         StartCoroutine(CompleteHole(_goToNextHole.currentHole.ToString()));
 
     }
@@ -52,27 +57,20 @@ public class CopController : MonoBehaviour
     {
         if(col.gameObject.CompareTag("cup"))
         {
+            // if player.currentHole = currentHole, trigger fail state
+            if(_goToNextHole.currentHole == currentHole)
+            {
+                Debug.Log("you lose");
+                failTextObject = GameObject.Find("FailPrompt");
+                failTextObject.GetComponent<Text>().enabled = true;
+                StartCoroutine(FailState());
+                
+            }
+            
+
             scored = true;
-            StartCoroutine(MovePlayerToNextHole());
+            Destroy(gameObject);
         }
-    }
-
-    IEnumerator MovePlayerToNextHole()
-    {
-        yield return null;
-        
-        if(currentHole == 6)
-            currentHole = 0;
-        transform.position = holesReference["Hole" + GetNextHole().ToString()] + Vector3.up;
-
-    }
-
-    int GetNextHole()
-    {   
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
-        currentHole++;
-        return currentHole;
-        
     }
 
     
@@ -87,7 +85,7 @@ public class CopController : MonoBehaviour
         //  find game object that matches string
         try
         {
-            var parentObject = GameObject.Find(hole);
+            var parentObject = GameObject.Find("Hole" + hole.ToString());
             for(int i=0; i<parentObject.transform.childCount; i++)
             {
                 if(parentObject.transform.GetChild(i).name.Contains("waypoint"))
@@ -173,8 +171,8 @@ public class CopController : MonoBehaviour
 
     }
 
-    public Transform startDistance;
-    public Transform endDistance;
+    private Transform startDistance;
+    private Transform endDistance;
 
     void GetDistance()
     {
@@ -197,6 +195,13 @@ public class CopController : MonoBehaviour
             Debug.Log("brakes on");
             stopVelocityThreshold = 0.5f;
         }
+    }
+
+    IEnumerator FailState()
+    {
+        //yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Mouse0));
+        yield return new WaitForSeconds(2.5f);
+        SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
     }
 
 
