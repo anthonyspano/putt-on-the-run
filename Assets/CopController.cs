@@ -69,7 +69,7 @@ public class CopController : MonoBehaviour
             
 
             scored = true;
-            Destroy(gameObject);
+            
         }
     }
 
@@ -141,7 +141,7 @@ public class CopController : MonoBehaviour
             scored = false;
         }
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2.5f);
 
         Debug.Log("finishing up");
         while(!scored)
@@ -166,6 +166,8 @@ public class CopController : MonoBehaviour
             }
 
             yield return new WaitForSeconds(3f);
+
+            
 
         }
 
@@ -199,9 +201,11 @@ public class CopController : MonoBehaviour
 
     IEnumerator FailState()
     {
-        //yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Mouse0));
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Mouse0));
+
+        //yield return new WaitForSeconds(2.5f);
         SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
+        yield return new WaitForSeconds(2.5f);
     }
 
 

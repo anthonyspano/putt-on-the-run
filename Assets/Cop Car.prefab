@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7895874944922784546}
   - component: {fileID: 6302204728552853435}
   - component: {fileID: 1695478395203260995}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cop Car
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -147,5 +147,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentHole: 1
-  startDistance: {fileID: 0}
-  endDistance: {fileID: 0}
+  failTextObject: {fileID: 0}
