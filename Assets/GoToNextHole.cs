@@ -14,11 +14,8 @@ public class GoToNextHole : MonoBehaviour
         var holes = GameObject.FindGameObjectsWithTag("start");
         foreach(GameObject hole in holes)
         {
-            Debug.Log(hole.transform.parent.parent.name);
             holesReference.Add(hole.transform.parent.parent.name, hole.transform.position);
         }
-        Debug.Log("here");
-        Debug.Log(holesReference);
 
     }
 

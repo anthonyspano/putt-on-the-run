@@ -8,6 +8,7 @@ TagManager:
   - start
   - Ground
   - Slope
+  - copstart
   layers:
   - Default
   - TransparentFX
