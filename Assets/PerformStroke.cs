@@ -73,7 +73,6 @@ public class PerformStroke : MonoBehaviour
 
     void AttemptStroke()
     {
-        Debug.Log("here");
         var cameraDirection = camera.transform.forward;
         var strokeDirection = new Vector3(cameraDirection.x, 0 , cameraDirection.z).normalized;
         rb.AddForce(strokeDirection * strokeForce.value, ForceMode.Impulse);

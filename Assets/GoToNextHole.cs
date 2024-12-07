@@ -14,10 +14,12 @@ public class GoToNextHole : MonoBehaviour
         var holes = GameObject.FindGameObjectsWithTag("start");
         foreach(GameObject hole in holes)
         {
+            Debug.Log(hole.transform.parent.parent.name);
             holesReference.Add(hole.transform.parent.parent.name, hole.transform.position);
         }
+        Debug.Log("here");
+        Debug.Log(holesReference);
 
-        //StartCoroutine(test());
     }
 
     void Update()
@@ -37,17 +39,16 @@ public class GoToNextHole : MonoBehaviour
     {
         if(col.gameObject.CompareTag("cup"))
         {
-            Debug.Log("score!");
-
             StartCoroutine(MovePlayerToNextHole());
         }
     }
 
     IEnumerator MovePlayerToNextHole()
     {
-        Debug.Log("moving player");
         yield return null;
         
+        if(currentHole == 6)
+            currentHole = 0;
         transform.position = holesReference["Hole" + GetNextHole().ToString()] + Vector3.up;
         ResetStrokeCount();
     }
