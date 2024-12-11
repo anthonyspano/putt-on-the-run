@@ -42,11 +42,16 @@ public class GoToNextHole : MonoBehaviour
     IEnumerator MovePlayerToNextHole()
     {
         yield return null;
+
+        // delete cop from current hole
+        Destroy(GameObject.Find("Cop Car(Clone)"));
         
         if(currentHole == 6)
             currentHole = 0;
         transform.position = holesReference["Hole" + GetNextHole().ToString()] + Vector3.up;
         ResetStrokeCount();
+
+        
     }
 
     int GetNextHole()

@@ -22,19 +22,38 @@ public class CopController : MonoBehaviour
 
     public GameObject failTextObject;
 
+    private AudioSource audioSource;
+    public AudioClip[] audioClipArray;
+
+    public BGM _BGM;
+
     void Start()
     {
+        rb = GetComponent<Rigidbody>();
+        StartCoroutine(GetBGM());
+        
         var holes = GameObject.FindGameObjectsWithTag("copstart");
         foreach(GameObject hole in holes)
         {
             holesReference.Add(hole.transform.parent.parent.name, hole.transform.position);
         }
 
-        rb = GetComponent<Rigidbody>();
+        
         _goToNextHole = GameObject.Find("Player").GetComponent<GoToNextHole>();
         currentHole = _goToNextHole.currentHole;
         StartCoroutine(CompleteHole(_goToNextHole.currentHole.ToString()));
 
+    }
+
+    IEnumerator GetBGM()
+    {
+        var bgmObject = GameObject.FindWithTag("Background");
+        Debug.Log(bgmObject); 
+        _BGM = bgmObject.GetComponent<BGM>();
+        Debug.Log(_BGM); 
+        Debug.Log(_BGM.CopEnabled); 
+        _BGM.CopEnabled = true;
+        yield return null;
     }
 
     void Update()
@@ -91,7 +110,7 @@ public class CopController : MonoBehaviour
                 if(parentObject.transform.GetChild(i).name.Contains("waypoint"))
                 {
                     waypoints.Add(parentObject.transform.GetChild(i).position);
-                    Debug.Log(parentObject.transform.GetChild(i).name + " is at " + parentObject.transform.GetChild(i).position);
+                    
                 }
             }
         }
@@ -107,7 +126,7 @@ public class CopController : MonoBehaviour
         {
             // hit the ball in that direction with power appropriate to distance
             // gauge distance to waypoint
-            Debug.Log("going to waypoint at: " + waypoint);
+            
 
             var distanceToHit = Vector3.Distance(transform.position, waypoint);
 
@@ -128,7 +147,6 @@ public class CopController : MonoBehaviour
             // hit the ball towards waypoint
             var direction = (waypoint - transform.position).normalized;
             direction.y = 0;
-            Debug.Log(direction);
             rb.AddForce(direction * power, ForceMode.Impulse);
 
             yield return null;
@@ -143,7 +161,6 @@ public class CopController : MonoBehaviour
 
         yield return new WaitForSeconds(2.5f);
 
-        Debug.Log("finishing up");
         while(!scored)
         {
             var distanceToHit = Vector3.Distance(transform.position, lastPoint);
@@ -206,6 +223,11 @@ public class CopController : MonoBehaviour
         //yield return new WaitForSeconds(2.5f);
         SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
         yield return new WaitForSeconds(2.5f);
+    }
+
+    void OnDestroy()
+    {
+        _BGM.CopEnabled = false;   
     }
 
 
